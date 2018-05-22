@@ -4,7 +4,7 @@ import os
 import subprocess
 import script_utils
 
-def submit_job(script, jobid, n_nodes):
+def submit_job(script, jobid, n_nodes, i):
     """ Submit job to cluster 
 
     Parameters
@@ -16,6 +16,8 @@ def submit_job(script, jobid, n_nodes):
         of jobs running at any one time with others on hold
     jobid : list 
         Constains the last submited job for each node
+    i : int
+        Index/iteration number of the job we are submitting
 
     Returns
     -------
