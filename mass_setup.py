@@ -178,7 +178,7 @@ for i, composition in enumerate(table_of_contents):
         body += operations.write_eq_lines(gro='compound.gro', top='compound.top')
         script_utils.write_rahman_script(f, jobname="{}_setup".format(name), body=body)
 
-    jobid = operations.submit_job('eq.pbs', jobid, n_nodes)  
+    jobid = operations.submit_job('eq.pbs', jobid, n_nodes, i)  
 
     # RWMD 
     rwmd_submission = operations.write_rwmd_files(index[name]['components'].keys(),
