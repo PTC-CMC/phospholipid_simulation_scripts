@@ -37,8 +37,8 @@ def submit_job(script, jobid, n_nodes, i):
                                  jobid[i % n_nodes], script), shell=True, 
                                  stdout=subprocess.PIPE, 
                                  stderr=subprocess.PIPE)
-            outs, errs = p.communicate()
-            jobid[i % n_nodes] = outs.decode().strip()
+        outs, errs = p.communicate()
+        jobid[i % n_nodes] = outs.decode().strip()
     elif "sbatch" in script:
         if not jobid[i % n_nodes]:
             p = subprocess.Popen('sbatch {}'.forma(script), shell=True, 
@@ -50,8 +50,8 @@ def submit_job(script, jobid, n_nodes, i):
                                  jobid[i % n_nodes], script), shell=True, 
                                  stdout=subprocess.PIPE, 
                                  stderr=subprocess.PIPE)
-            outs, errs = p.communicate()
-            jobid[i % n_nodes] = outs.decode().strip()
+        outs, errs = p.communicate()
+        jobid[i % n_nodes] = outs.decode().strip()
     return jobid
 
 def write_eq_lines(gro='compound.gro', top='compound.top'):
