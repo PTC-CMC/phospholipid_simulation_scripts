@@ -192,5 +192,6 @@ for i, composition in enumerate(table_of_contents):
 
     # Production
 
+os.chdir(curr_dir)
 with open('index.txt', 'w') as f:
     json.dump(index, f, indent=2)
