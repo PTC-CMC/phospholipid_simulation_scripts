@@ -186,7 +186,7 @@ for i, composition in enumerate(table_of_contents):
                                 t_max=405, cooling_rate=1000)
     with open('rwmd_chain.pbs', 'w') as f:
         body = 'cd {}\n'.format(os.getcwd())
-        body += 'module load gromacs/5.1.0\n'
+        body += 'module load gromacs/5.1.4\n'
         body += rwmd_submission
         script_utils.write_rahman_script(f, jobname='{}_rwmd'.format(name), body=body)
 
