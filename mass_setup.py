@@ -132,6 +132,10 @@ table_of_contents.append(['11_dspc_c24ffa_5-22-18c',
 
 for i, composition in enumerate(table_of_contents):
     os.chdir(curr_dir)
+    p = subprocess.Popen('mkdir -p {}'.format(name), shell=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p.wait()
+    os.chdir(os.path.join(curr_dir, name))
     name = composition[0]
     lipid_info = composition[1]
     index[name] = OrderedDict()
@@ -139,10 +143,7 @@ for i, composition in enumerate(table_of_contents):
     for species in lipid_info:
         index[name]['components'][species[0].name] = species[1]
 
-    p = subprocess.Popen('mkdir -p {}'.format(name), shell=True,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    p.wait()
-    os.chdir(os.path.join(curr_dir, name))
+    
 
     # Random apl [27,35] and tilt [0,20] and spin [0,10]
     apl = 0.30 + (0.08 * np.random.random())
