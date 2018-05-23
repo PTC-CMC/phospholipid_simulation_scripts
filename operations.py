@@ -41,7 +41,7 @@ def submit_job(script, jobid, n_nodes, i):
         jobid[i % n_nodes] = outs.decode().strip()
     elif "sbatch" in script:
         if not jobid[i % n_nodes]:
-            p = subprocess.Popen('sbatch {}'.forma(script), shell=True, 
+            p = subprocess.Popen('sbatch {}'.format(script), shell=True, 
                                  stdout=subprocess.PIPE, 
                                  stderr=subprocess.PIPE)
             p.wait()
@@ -86,27 +86,27 @@ def write_rwmd_files(components, gro='npt_500ps.gro', top='compound.top',
     Will require a recompiled verion of gromacs, modified for longer string buffers
     """
     # First 25 ns is just the maximum range of heating
-    #tc_groups = ['DSPC', 'water']
-    tc_groups = [i for i in components]
-    tc_groups.append('water')
+    tc_groups = ['non-water', 'water']
+    #tc_groups = [i for i in components]
+    #tc_groups.append('water')
     t_pairs = [[305, t_max] for _ in tc_groups]
     #t_pairs = [[305,385],[305,385]]
     total_cooling_time = (t_pairs[0][1] - t_pairs[0][0])*cooling_rate 
     with open("heating_phase.mdp", 'w')as f:
-        _write_body(f, ref_temp=305, n_steps=40000000, tc_groups=tc_groups)
+        _write_body(f, ref_temp=305, n_steps=15000000, tc_groups=tc_groups)
         times, all_temps, t_pairs = _generate_heating_phase(f, t_pairs=t_pairs, 
-                interval=5, time_anneal=40000, 
+                interval=5, time_anneal=30000, 
                 dtemp=10, water_thermostat_style='plateau')
 
         _write_annealing_lines(f, times, all_temps)
 
     
     # Cooling phase is a series of 25ns simulations
-    for i, t_start in enumerate(np.arange(40000, 40000 + total_cooling_time, 20000)):
+    for i, t_start in enumerate(np.arange(30000, 30000 + total_cooling_time, 20000)):
         #print("Writing cooling_phase{}.mdp".format(i))
         #print("Temperature Pairs: {}".format(t_pairs))
         with open("cooling_phase{}.mdp".format(i),'w') as f:
-            _write_body(f, ref_temp=305, n_steps=20000000, t_init=t_start, 
+            _write_body(f, ref_temp=305, n_steps=10000000, t_init=t_start, 
                     tc_groups=tc_groups)
             times, all_temps, t_pairs = _generate_cooling_phase(t_pairs=t_pairs,
                 duration=20000, interval=5, cooling_rate=cooling_rate, 
@@ -158,8 +158,8 @@ def _write_body(f, ref_temp=305, n_steps=50000000,t_init=0,tc_groups=None):
     f.write(""" title                       = RWMD
 ; Run parameters
 integrator                  = md
-nsteps                      = {n_steps}     ; 1fs/step * 5e7 steps = 5e7 fs = 50 ns
-dt                          = 0.001
+nsteps                      = {n_steps}     ; 2fs/step * 5e7 steps = 5e7 fs = 50 ns
+dt                          = 0.002
 tinit                       = {t_init}
 
 ; Output control
@@ -172,8 +172,8 @@ nstxtcout                   = 10000
 ;bond parameters
 continuation                = yes
 constraint_algorithm        = lincs
-;constraints                 = all-bonds
-constraints                 = none
+constraints                 = h-bonds
+;constraints                 = none
 lincs_iter                  = 1
 lincs_order                 = 4
 
