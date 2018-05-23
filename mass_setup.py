@@ -31,7 +31,10 @@ n_x = 8
 n_y = 8
 n_solvent_per_lipid = 20
 
-index = OrderedDict()
+if os.path.isfile('index.txt'):
+    index = json.load(open('index.txt', 'r'))
+else:
+    index = OrderedDict()
 
 table_of_contents = []
 
