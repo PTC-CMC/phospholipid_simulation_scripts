@@ -135,12 +135,13 @@ table_of_contents.append(['11_dspc_c24ffa_5-22-18c',
 
 for i, composition in enumerate(table_of_contents):
     os.chdir(curr_dir)
+    name = composition[0]
+    lipid_info = composition[1]
+
     p = subprocess.Popen('mkdir -p {}'.format(name), shell=True,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()
     os.chdir(os.path.join(curr_dir, name))
-    name = composition[0]
-    lipid_info = composition[1]
     index[name] = OrderedDict()
     index[name]['components'] = OrderedDict()
     for species in lipid_info:
