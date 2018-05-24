@@ -51,7 +51,7 @@ def submit_job(script, jobid, n_nodes, i):
                                  stdout=subprocess.PIPE, 
                                  stderr=subprocess.PIPE)
         outs, errs = p.communicate()
-        jobid[i % n_nodes] = outs.decode().strip()
+        jobid[i % n_nodes] = outs.decode().strip().split()[-1]
     return jobid
 
 def write_eq_lines(gro='compound.gro', top='compound.top'):
