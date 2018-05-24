@@ -37,6 +37,7 @@ def submit_job(script, jobid, n_nodes, i):
                                  jobid[i % n_nodes], script), shell=True, 
                                  stdout=subprocess.PIPE, 
                                  stderr=subprocess.PIPE)
+            p.wait()
         outs, errs = p.communicate()
         jobid[i % n_nodes] = outs.decode().strip()
     elif "sbatch" in script:
