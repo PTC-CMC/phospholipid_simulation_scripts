@@ -78,19 +78,28 @@ def submit_job(script, jobid, n_nodes, i):
         jobid[i % n_nodes] = outs.decode().strip().split()[-1]
     return jobid
 
+###############################
+### Equilibration functions ###
+##############################
+
 def write_eq_lines(gro='compound.gro', top='compound.top'):
     """ Write EM, NVT, NPT lines for equilibration """
     lines = """
-gmx_sp grompp -f em.mdp -c {gro} -p {top} -o em -maxwarn 2 &> em_grompp.log
-srun -n 48 -c 1 mdrun_mpi_sp -deffnm em -ntomp 1 
+gmx grompp -f em.mdp -c {gro} -p {top} -o em -maxwarn 2 &> em_grompp.log
+gmx mdrun -deffnm em 
 
-gmx_sp grompp -f nvt.mdp -c em.gro -p {top} -o nvt -maxwarn 2 &> nvt_grompp.log
-srun -n 48 -c 1 mdrun_mpi_sp -deffnm nvt -ntomp 1 
+gmx grompp -f nvt.mdp -c em.gro -p {top} -o nvt -maxwarn 2 &> nvt_grompp.log
+gmx mdrun -deffnm nvt
 
-gmx_sp grompp -f npt_500ps.mdp -c nvt.gro -p {top} -o npt_500ps -t nvt.cpt -maxwarn 2 &> npt_500ps_grompp.log
-srun -n 48 -c 1 mdrun_mpi_sp -deffnm npt_500ps -ntomp 1""".format(**locals())
+gmx grompp -f npt_500ps.mdp -c nvt.gro -p {top} -o npt_500ps -t nvt.cpt -maxwarn 2 &> npt_500ps_grompp.log
+gmx mdrun -deffnm npt_500ps -ntomp 1""".format(**locals())
     return lines
 
+
+
+#############################
+### RWMD helper functions ###
+#############################
 
 def write_rwmd_files(components, gro='npt_500ps.gro', top='compound.top', 
                     cooling_rate=1000, t_max=385):
