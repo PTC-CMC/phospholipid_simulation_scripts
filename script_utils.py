@@ -13,7 +13,7 @@ def write_rahman_script(f, jobname="JOBNAME", body=""):
 #PBS -q low
 #PBS -m abe
 #PBS -M ayang41@gmail.com
-#module load gromacs/5.1.4
+module load gromacs/5.1.4
 {body}
 """.format(jobname=jobname, body=body))
     return f
@@ -37,7 +37,7 @@ def write_edison_script(f, jobname="JOBNAME", N="1", t="24:00:00", body=""):
 #SBATCH --mail-user=alexander.h.yang@vanderbilt.edu
 #SBATCH -L SCRATCH
 
-module load gromacs/5.1.4-2
+module load cray-fftw/3.3.6.3
 module load lammps/2017.03.31
 export OMP_NUM_THREADS=1
 {body}
