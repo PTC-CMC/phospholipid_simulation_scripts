@@ -4,6 +4,28 @@ import os
 import subprocess
 import script_utils
 
+def modify_top(top='compound.top',
+               include="#include \"/raid6/homes/ahy3nz/Programs/McCabeGroup/atomistic/forcefield.itp\"\n"):
+    """ Modify topology file include statement
+
+    Parameters
+    ---------
+    top : str
+        filename of gmx topology
+    include : str
+        new include statement
+
+    Notes'
+    ------
+    Top file is overwritten
+    Assumes the include statement is in the first line
+    """
+    toplines = open(top,'r').readlines()
+    toplines[0] = include
+    with open(top,'w') as f:
+        for line in toplines:
+            f.write(line)
+
 def submit_job(script, jobid, n_nodes, i):
     """ Submit job to cluster 
 
@@ -51,6 +73,7 @@ def submit_job(script, jobid, n_nodes, i):
                                  jobid[i % n_nodes], script), shell=True, 
                                  stdout=subprocess.PIPE, 
                                  stderr=subprocess.PIPE)
+            p.wait()
         outs, errs = p.communicate()
         jobid[i % n_nodes] = outs.decode().strip().split()[-1]
     return jobid
@@ -58,14 +81,14 @@ def submit_job(script, jobid, n_nodes, i):
 def write_eq_lines(gro='compound.gro', top='compound.top'):
     """ Write EM, NVT, NPT lines for equilibration """
     lines = """
-gmx grompp -f em.mdp -c {gro} -p {top} -o em -maxwarn 2 &> em_grompp.log
-gmx mdrun -deffnm em
+gmx_sp grompp -f em.mdp -c {gro} -p {top} -o em -maxwarn 2 &> em_grompp.log
+srun -n 48 -c 1 mdrun_mpi_sp -deffnm em -ntomp 1 
 
-gmx grompp -f nvt.mdp -c em.gro -p {top} -o nvt -maxwarn 2 &> nvt_grompp.log
-gmx mdrun -deffnm nvt
+gmx_sp grompp -f nvt.mdp -c em.gro -p {top} -o nvt -maxwarn 2 &> nvt_grompp.log
+srun -n 48 -c 1 mdrun_mpi_sp -deffnm nvt -ntomp 1 
 
-gmx grompp -f npt_500ps.mdp -c nvt.gro -p {top} -o npt_500ps -t nvt.cpt -maxwarn 2 &> npt_500ps_grompp.log
-gmx mdrun -deffnm npt_500ps""".format(**locals())
+gmx_sp grompp -f npt_500ps.mdp -c nvt.gro -p {top} -o npt_500ps -t nvt.cpt -maxwarn 2 &> npt_500ps_grompp.log
+srun -n 48 -c 1 mdrun_mpi_sp -deffnm npt_500ps -ntomp 1""".format(**locals())
     return lines
 
 
