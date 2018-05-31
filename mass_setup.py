@@ -185,17 +185,6 @@ for i, composition in enumerate(table_of_contents):
 
     jobid = operations.submit_job('eq.pbs', jobid, n_nodes, i)  
 
-    # RWMD 
-    rwmd_submission = operations.write_rwmd_files(index[name]['components'].keys(),
-                                gro='npt_500ps.gro', top='compound.top', 
-                                t_max=405, cooling_rate=1000)
-    with open('rwmd_chain.pbs', 'w') as f:
-        body = 'cd {}\n'.format(os.getcwd())
-        body += 'module load gromacs/5.1.4\n'
-        body += rwmd_submission
-        script_utils.write_rahman_script(f, jobname='{}_rwmd'.format(name), body=body)
-
-    # Production
 
 os.chdir(curr_dir)
 with open('index.txt', 'w') as f:
