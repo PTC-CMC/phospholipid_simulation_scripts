@@ -21,4 +21,4 @@ for i, name in enumerate(index.keys()):
         body = 'cd {}\n'.format(os.getcwd())
         body += rwmd_submission
         script_utils.write_rahman_script(f, jobname='{}_rwmd'.format(name), body=body)
-    operations.submit_job('rwmd_chain.pbs', jobid, n_nodes, i)
+    jobid = operations.submit_job('rwmd_chain.pbs', jobid, n_nodes, i)
