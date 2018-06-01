@@ -19,6 +19,12 @@ def modify_top(top='compound.top',
     ------
     Top file is overwritten
     Assumes the include statement is in the first line
+
+    Useful includes to remember:
+    rahman: /raid6/homes/ahy3nz/Programs/McCabeGroup/atomistic/forcefield.itp
+    edison: /global/homes/a/ahy3nz/Programs/McCabeGroup/atomistic/forcefield.itp
+    accre: /home/yangah/Programs/McCabeGroup/atomistic/forcefield.itp
+
     """
     toplines = open(top,'r').readlines()
     toplines[0] = include
