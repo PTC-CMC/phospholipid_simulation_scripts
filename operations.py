@@ -80,7 +80,7 @@ def submit_job(script, jobid, n_nodes, i):
 
 ###############################
 ### Equilibration functions ###
-##############################
+###############################
 
 def write_eq_lines(gro='compound.gro', top='compound.top'):
     """ Write EM, NVT, NPT lines for equilibration """
@@ -95,11 +95,19 @@ gmx grompp -f npt_500ps.mdp -c nvt.gro -p {top} -o npt_500ps -t nvt.cpt -maxwarn
 gmx mdrun -deffnm npt_500ps -ntomp 1""".format(**locals())
     return lines
 
+###########################
+## Production functions ###
+###########################
+
+def write_production_lines(filename='npt'):
+    """ Write NPT production """
+    lines = "gmx mdrun -ntomp 8 -deffnm {filename} -cpi {filename}.cpt -append".format( **locals())
+    return lines
 
 
-#############################
-### RWMD helper functions ###
-#############################
+######################
+### RWMD functions ###
+######################
 
 def write_rwmd_files(components, gro='npt_500ps.gro', top='compound.top', 
                     cooling_rate=1000, t_max=385):
@@ -165,16 +173,16 @@ def _write_rahman_rwmd(gro='npt_500ps.gro', top='compound.top', n_cooling=4):
     """
     lines = """
 mygmx grompp -f heating_phase.mdp -c {gro} -p {top} -o heating_phase &> heating_phase.out
-gmx mdrun -ntomp 8 -gpu_id 01 -deffnm heating_phase
+gmx mdrun -ntomp 8 -gpu_id 01 -deffnm heating_phase -cpi heating_phase.cpt -append
 
 mygmx grompp -f cooling_phase0.mdp -c heating_phase.gro -p {top} -t heating_phase.cpt -o cooling_phase0
-gmx mdrun -ntomp 8 -gpu_id 01 -deffnm cooling_phase0 &> cooling_phase0.out
+gmx mdrun -ntomp 8 -gpu_id 01 -deffnm cooling_phase0 -cpi cooling_phase0.cpt -append &> cooling_phase0.out
 
 
 for ((i=1; i<={n_cooling} ; i++))
 do
     mygmx grompp -f cooling_phase${{i}}.mdp -c cooling_phase$((${{i}}-1)).gro -p {top} -t cooling_phase$((${{i}}-1)).cpt -o cooling_phase${{i}}
-    gmx mdrun -ntomp 8 -gpu_id 01 -deffnm cooling_phase${{i}} &> cooling_phase${{i}}.out
+    gmx mdrun -ntomp 8 -gpu_id 01 -deffnm cooling_phase${{i}} -cpi cooling_phase${{i}}.cpt -append &> cooling_phase${{i}}.out
 done
 
 gmx grompp -f npt.mdp -c cooling_phase$((${{i}}-1)).gro -p {top} -o npt > npt_grompp.out
