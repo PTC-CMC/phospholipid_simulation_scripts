@@ -5,7 +5,7 @@ import subprocess
 import script_utils
 
 def modify_top(top='compound.top',
-               include="#include \"/raid6/homes/ahy3nz/Programs/McCabeGroup/atomistic/forcefield.itp\"\n"):
+               include="#include \"/raid6/homes/ahy3nz/Programs/McCabeGroup/atomistic/forcefield.itp\""):
     """ Modify topology file include statement
 
     Parameters
@@ -27,7 +27,7 @@ def modify_top(top='compound.top',
 
     """
     toplines = open(top,'r').readlines()
-    toplines[0] = include
+    toplines[0] = include + "\n"
     with open(top,'w') as f:
         for line in toplines:
             f.write(line)
