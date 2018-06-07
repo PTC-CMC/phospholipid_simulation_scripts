@@ -1,5 +1,5 @@
 # Screening Template  
-Skeleton code for systematically initializing and equilibrating systems  
+Skeleton code for systematically initializing, equilibrating, and analyzing systems  
 1. `initialize.py`
     * Use mBuild to construct systems based on composition and parameters specified
     * Briefly equilibrate via EM, NVT, NPT
