@@ -107,7 +107,7 @@ gmx mdrun -deffnm npt_500ps -ntomp 1""".format(**locals())
 
 def write_production_lines(filename='npt'):
     """ Write NPT production """
-    lines = "gmx mdrun -ntomp 8 -deffnm {filename} -cpi {filename}.cpt -append".format( **locals())
+    lines = "gmx mdrun -ntomp 8 -ntmpi 2 -gpu_id 01 -deffnm {filename} -cpi {filename}.cpt -append".format( **locals())
     return lines
 
 
@@ -179,16 +179,16 @@ def _write_rahman_rwmd(gro='npt_500ps.gro', top='compound.top', n_cooling=4):
     """
     lines = """
 mygmx grompp -f heating_phase.mdp -c {gro} -p {top} -o heating_phase &> heating_phase.out
-gmx mdrun -ntomp 8 -gpu_id 01 -deffnm heating_phase -cpi heating_phase.cpt -append
+gmx mdrun -ntomp 8 -ntmpi 2 -gpu_id 01 -deffnm heating_phase -cpi heating_phase.cpt -append
 
 mygmx grompp -f cooling_phase0.mdp -c heating_phase.gro -p {top} -t heating_phase.cpt -o cooling_phase0
-gmx mdrun -ntomp 8 -gpu_id 01 -deffnm cooling_phase0 -cpi cooling_phase0.cpt -append &> cooling_phase0.out
+gmx mdrun -ntomp 8 -ntmpi 2 -gpu_id 01 -deffnm cooling_phase0 -cpi cooling_phase0.cpt -append &> cooling_phase0.out
 
 
 for ((i=1; i<={n_cooling} ; i++))
 do
     mygmx grompp -f cooling_phase${{i}}.mdp -c cooling_phase$((${{i}}-1)).gro -p {top} -t cooling_phase$((${{i}}-1)).cpt -o cooling_phase${{i}}
-    gmx mdrun -ntomp 8 -gpu_id 01 -deffnm cooling_phase${{i}} -cpi cooling_phase${{i}}.cpt -append &> cooling_phase${{i}}.out
+    gmx mdrun -ntomp 8 -ntmpi 2 -gpu_id 01 -deffnm cooling_phase${{i}} -cpi cooling_phase${{i}}.cpt -append &> cooling_phase${{i}}.out
 done
 
 gmx grompp -f npt.mdp -c cooling_phase$((${{i}}-1)).gro -p {top} -o npt > npt_grompp.out

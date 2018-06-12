@@ -13,7 +13,8 @@ def write_rahman_script(f, jobname="JOBNAME", body=""):
 #PBS -q low
 #PBS -m abe
 #PBS -M ayang41@gmail.com
-module load gromacs/5.1.4
+#module load gromacs/5.1.4
+module load gromacs/2018.1
 {body}
 """.format(jobname=jobname, body=body))
     return f
