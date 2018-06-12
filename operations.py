@@ -107,7 +107,7 @@ gmx mdrun -deffnm npt_500ps -ntomp 1""".format(**locals())
 
 def write_production_lines(filename='npt'):
     """ Write NPT production """
-    lines = "gmx mdrun -ntomp 8 -ntmpi 2 -gpu_id 01 -deffnm {filename} -cpi {filename}.cpt -append".format( **locals())
+    lines = "gmx mdrun -ntomp 8 -ntmpi 2 -gpu_id 01 -deffnm {filename} -cpi {filename}_prev.cpt -append".format( **locals())
     return lines
 
 
