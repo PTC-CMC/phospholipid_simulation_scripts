@@ -157,7 +157,7 @@ def write_rwmd_files(components, gro='npt_500ps.gro', top='compound.top',
                     tc_groups=tc_groups)
             times, all_temps, t_pairs = _generate_cooling_phase(t_pairs=t_pairs,
                 duration=20000, interval=5, cooling_rate=cooling_rate, 
-                time_start=t_start, 
+                time_start=t_start, dtemp=10,
                 water_thermostat_style='plateau')
             _write_annealing_lines(f, times, all_temps)
     return _write_rahman_rwmd(gro=gro, top=top, n_cooling=i)
@@ -342,18 +342,25 @@ def _generate_heating_phase(f,t_pairs=None,
 
 def _generate_cooling_phase(time_start=25000, duration=50000, interval=5, 
         cooling_rate=500,
-        t_pairs=None, 
+        t_pairs=None, dtemp=10,
         water_thermostat_style=None):
     """
     Change temperatures every 5 ps
     Reduce ceiling 2 K every ns
     Reduce ceiling 1 K every 500ps
+    time_start : int
+        Initial time of simulation (ps)
     duration : int
         Length of cooling phase (ps)
     interval :
-        duration of particular temperature before attempting jumpg
+        duration of particular temperature before attempting jum (ps)
     cooling_rate : float
         Every `cooling_rate` ps, drop the RWMD temperature ceiling by 1 K
+    t_pairs : list of 2-tuples
+        Elements of t_pairs are 2-tuples, where each element is a particular
+        temperatuer group, and the elements of the tuple are (temp_low and temp_max)
+    dtemp : int
+        Potential temperature jumps
     water_thermostat_style : str
         Specifies how to thermstat water 
         'plateau' for water to plateau if thermostat exceeds a temperature
@@ -391,7 +398,8 @@ def _generate_cooling_phase(time_start=25000, duration=50000, interval=5,
         if time % cooling_rate == 0 and t_pairs[0][1] > t_pairs[0][0] + 1:
             t_pairs[0][1] -= 1
 
-        new_temp = np.random.randint(t_pairs[0][0], t_pairs[0][1])
+        #new_temp = np.random.randint(t_pairs[0][0], t_pairs[0][1])
+        new_temp = np.random.choice(all_temps[0,i] - dtemp, all_temps[0,i] + dtemp)
 
         for j, tc_group in enumerate(t_pairs):
             if water_thermostat_style == 'proportional':
