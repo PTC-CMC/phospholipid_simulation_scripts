@@ -302,7 +302,9 @@ def _generate_heating_phase(f,t_pairs=None,
 
         # Randomly pick a temperature
         new_temps = np.zeros(len(t_pairs))
-        candidate_temp = random.choice(possible_temps)
+        #candidate_temp = random.choice(possible_temps)
+        adjacent_temps = [all_temps[0, i-1] - dtemp, all_temps[0, i+1] + dtemp]
+        candidate_temp = random.choice(adjacent_temps)
 
         # Compare it to a criteria
         if histogram[all_temps[0,i-1]] >= histogram[candidate_temp]:
