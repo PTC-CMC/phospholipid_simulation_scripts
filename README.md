@@ -7,8 +7,9 @@ Skeleton code for systematically initializing, equilibrating, and analyzing syst
     * Perform RWMD 
 3. `production.py`
     * NPT production
-4. `analyze_sims.py`
+4. `compute*.py`
     * Analyze each simulation
-5. `process_data.py`
-    * Gather all data based on composition
-
+5. `process*.py`
+    * Gather statistics for each composition from its constituent simulations
+6. `plot*.py`
+    * Plot properties for each composition with appropriate errors
