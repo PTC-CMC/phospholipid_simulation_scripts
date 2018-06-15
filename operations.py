@@ -2,6 +2,8 @@ import numpy as np
 import random
 import os
 import subprocess
+import mdtraj
+import bilayer_analysis_functions
 import script_utils
 
 def modify_top(top='compound.top',
