@@ -5,6 +5,9 @@ import tex_sampling.pyrex as pyrex
 ######################
 ### RWMD functions ###
 ######################
+### A random-walk through temperature space, attempting temperature swaps with
+### adjacent temperature windows every so often. Includes functions for 
+### a ramp-down cycle when the RWMD temperature ceiling decreases
 
 def write_rwmd_files(tc_groups=['non-water','water'], gro='npt_500ps.gro', 
                     top='compound.top', 
