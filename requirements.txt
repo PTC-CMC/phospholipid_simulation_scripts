@@ -1,0 +1,6 @@
+numpy
+scipy
+tex_sampling
+pandas
+matplotlib
+mdtraj
