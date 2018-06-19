@@ -5,7 +5,7 @@ Skeleton code for systematically initializing, equilibrating, and analyzing syst
     * Briefly equilibrate via EM, NVT, NPT
 2. `run_rwmd.py`
     * Perform RWMD 
-3. `ruN_production.py`
+3. `run_production.py`
     * NPT production
 4. `compute*.py`
     * Analyze each simulation
