@@ -68,7 +68,7 @@ for composition_i in all_compositions:
     # so we can safely discard and then the bin centers and profiles have 
     # the same dimensions
     name = ""
-    for key, val in composition_i.items():
+    for key, val in sorted(composition_i.items()):
         name += '{}-{}_'.format(key,val)
     name += 'occ_profile'
 

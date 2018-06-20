@@ -27,7 +27,7 @@ all_compositions = [OrderedDict({'DSPC':32, 'ffa12':32}),
                     OrderedDict({'DSPC':32, 'oh24':32})]
 for composition_i in all_compositions:
     name = ""
-    for key, val in composition_i.items():
+    for key, val in sorted(composition_i.items()):
         name += '{}-{}_'.format(key,val)
     name += 'occ_profile'
 
