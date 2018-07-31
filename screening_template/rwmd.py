@@ -108,7 +108,7 @@ def tex_heating(t_pairs=[(305,385), (305,385)], dT=10, current_T=305,
             freq = pyrex.init_freq_dict(t_pairs[0,0], t_pairs[0,1], dT, T_init=current_T)
             temps = np.zeros((n_groups, int(heating_steps/interval_steps)) )
             temps[:,0] = current_T
-            annealing_times = np.zeros(int(heating_steps/interval_steps))
+            annealing_times = np.zeros(int(heating_steps/interval_steps), dtype=int)
             annealing_times[0] = int(sim_time) 
             _adjust_t_groups(t_pairs, temps, current_T, step, interval_steps,
                         thermostat_style='plateau')
