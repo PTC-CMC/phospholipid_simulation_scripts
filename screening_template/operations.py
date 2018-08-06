@@ -3,7 +3,6 @@ import random
 import os
 import subprocess
 import mdtraj
-import bilayer_analysis_functions
 import script_utils
 import rwmd
 
@@ -110,7 +109,7 @@ gmx mdrun -deffnm npt_500ps -ntomp 2 -ntmpi 8 -gpu_id 01 """.format(**locals())
 
 def write_production_lines(filename='npt'):
     """ Write NPT production """
-    lines = "gmx mdrun -ntomp 2 -ntmpi 8 -gpu_id 01 -deffnm {filename} -cpi {filename}.cpt -append".format( **locals())
+    lines = "gmx mdrun -ntomp 2 -ntmpi 8 -gpu_id 01 -deffnm {filename} -cpi {filename}_prev.cpt -append".format( **locals())
     return lines
 
 ######################
@@ -141,24 +140,33 @@ def write_rwmd_lines(gro='npt_500ps.gro', top='compound.top',
     n_cooling = rwmd.write_rwmd_files(tc_groups=tc_groups, gro=gro, top=top, 
                                      cooling_rate=cooling_rate, t_pairs=t_pairs)
     lines = """
-mygmx grompp -f heating_phase.mdp -c {gro} -p {top} -o heating_phase &> heating_phase.out
-gmx mdrun -ntomp 2 -ntmpi 8 -gpu_id 01 -deffnm heating_phase -cpi heating_phase.cpt -append
+gmx2018 grompp -f heating_phase.mdp -c {gro} -p {top} -o heating_phase &> heating_phase.out
+gmx2018 mdrun -ntomp 2 -ntmpi 8 -gpu_id 01 -deffnm heating_phase -cpi heating_phase_prev.cpt -append
 
-mygmx grompp -f cooling_phase0.mdp -c heating_phase.gro -p {top} -t heating_phase.cpt -o cooling_phase0
-gmx mdrun -ntomp 2 -ntmpi 8 -gpu_id 01 -deffnm cooling_phase0 -cpi cooling_phase0.cpt -append &> cooling_phase0.out
+gmx2018 grompp -f cooling_phase0.mdp -c heating_phase.gro -p {top} -t heating_phase_prev.cpt -o cooling_phase0
+gmx2018 mdrun -ntomp 2 -ntmpi 8 -gpu_id 01 -deffnm cooling_phase0 -cpi cooling_phase0_prev.cpt -append &> cooling_phase0.out
 
 
 for ((i=1; i<={n_cooling} ; i++))
 do
-    mygmx grompp -f cooling_phase${{i}}.mdp -c cooling_phase$((${{i}}-1)).gro -p {top} -t cooling_phase$((${{i}}-1)).cpt -o cooling_phase${{i}}
-    gmx mdrun -ntomp 2 -ntmpi 8 -gpu_id 01 -deffnm cooling_phase${{i}} -cpi cooling_phase${{i}}.cpt -append &> cooling_phase${{i}}.out
+    gmx2018 grompp -f cooling_phase${{i}}.mdp -c cooling_phase$((${{i}}-1)).gro -p {top} -t cooling_phase$((${{i}}-1))_prev.cpt -o cooling_phase${{i}}
+    gmx2018 mdrun -ntomp 2 -ntmpi 8 -gpu_id 01 -deffnm cooling_phase${{i}} -cpi cooling_phase${{i}}_prev.cpt -append &> cooling_phase${{i}}.out
 done
 
-gmx grompp -f npt.mdp -c cooling_phase$((${{i}}-1)).gro -p {top} -o npt > npt_grompp.out
+gmx2018 grompp -f npt.mdp -c cooling_phase$((${{i}}-1)).gro -p {top} -o npt > npt_grompp.out
 """.format(**locals())
     return lines
 
 def analysis_routine(trajfile, grofile, pdbfile):
+
+    import json
+    from collections import OrderedDict
+    import bilayer_analysis_functions
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+
     traj = mdtraj.load(trajfile, top=grofile)
     traj_pdb = mdtraj.load(trajfile, top=pdbfile)
     topol = traj.topology
