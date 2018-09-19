@@ -7,6 +7,9 @@ import mdtraj
 
 import gmx_ndx_functions
 
+########
+## Look at solute, solvent hbonding using gromacs
+####
 curr_dir = os.getcwd()
 index = json.load(open('index.txt' ,'r'))
 
@@ -25,11 +28,10 @@ for comp in index.keys():
     traj = mdtraj.load('npt.gro')
     valid_residues = set(list(a.name for a in traj.topology.residues 
             if 'HOH' not in a.name and 'SOL' not in a.name))
-    with open('hbond2.log', 'w') as f:
+    with open('hbond.log', 'w') as f:
         for key in group_pairs.keys():
-            if not os.path.isfile('{}_life.xvg'.format(key)):
-                p = subprocess.Popen('echo {0} {1} | gmx hbond -f npt_80-100ns.xtc '.format(group_pairs[key][0], group_pairs[key][1]) +
-                        '-s npt.tpr -n hbond.ndx -life {0}_life.xvg -num {0}_num.xvg'.format(
-                            key),
-                    shell=True, stdout=f, stderr=f)
-                p.wait()
+            p = subprocess.Popen('echo {0} {1} | gmx hbond -f npt_80-100ns.xtc '.format(group_pairs[key][0], group_pairs[key][1]) +
+                    '-s npt.tpr -n hbond.ndx -life {0}_life.xvg -num {0}_num.xvg'.format(
+                        key),
+                shell=True, stdout=f, stderr=f)
+            p.wait()
