@@ -29,8 +29,9 @@ oh_components = ['oh12', 'oh16','oh24']
 val_matrix = np.zeros((len(ffa_components), len(oh_components)))
 for i, oh in enumerate(oh_components):
     for j, ffa in enumerate(ffa_components):
-        thing = df.loc[(df[oh] ==21.0) & (df['DSPC'] ==22.0) & (df[ffa] ==21.0)]
+        thing = df.loc[(df[oh] ==16.0) & (df['DSPC'] ==32.0) & (df[ffa] ==16.0)]
         val_matrix[i,j] = thing['interface_idig_mean'].values[0]
+        unit = thing['interface_idig_unit'].values[0]
 
 fig, ax = plt.subplots(1,1)
 im = ax.imshow(val_matrix, cmap='viridis')
@@ -42,7 +43,8 @@ ax.set_yticks(range(len(oh_components)))
 ax.set_xticklabels([thing.upper() for thing in ffa_components])
 ax.set_yticklabels([thing.upper() for thing in oh_components])
 
-ax.set_title("Interfacial Interdigitation (nm), \n33% DSPC")
+ax.set_title("Interfacial Interdigitation ({}), \n50% DSPC".format(
+    unit_to_str[unit]))
 
 # Loop over data dimensions and create text annotations.
 for i in range(len(oh_components)):
