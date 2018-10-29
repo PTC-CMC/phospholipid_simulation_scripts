@@ -13,6 +13,8 @@ for folder in index.keys():
     print(folder)
     os.chdir(os.path.join(curr_dir, folder))
     try:
-        interfacial_water_relaxation.main()
+        stretched_exp_params = interfacial_water_relaxation.main()
+        with open('dip_corr_fit.txt', 'w') as f:
+            json.dump(stretched_exp_params, f, indent=2)
     except:
         print("{} failed")
