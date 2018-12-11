@@ -48,7 +48,7 @@ def write_rwmd_files(tc_groups=['non-water','water'], gro='npt_500ps.gro',
 
     n_cooling = tex_cooling(t_pairs=t_pairs, current_T=current_T, 
                 sim_time=sim_time,
-                cooling_duration=30000, interval_duration=5, cooling_rate=1000,
+                cooling_duration=20000, interval_duration=5, cooling_rate=1000,
                 timestep=0.002, tc_groups=tc_groups)
 
     #return _write_rahman_rwmd(gro=gro, top=top, n_cooling=n_cooling)
