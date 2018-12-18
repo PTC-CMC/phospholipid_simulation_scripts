@@ -100,7 +100,7 @@ gmx grompp -f nvt.mdp -c em.gro -p {top} -o nvt -maxwarn 2 &> nvt_grompp.log
 gmx mdrun -deffnm nvt
 
 gmx grompp -f npt_500ps.mdp -c nvt.gro -p {top} -o npt_500ps -t nvt.cpt -maxwarn 2 &> npt_500ps_grompp.log
-gmx mdrun -deffnm npt_500ps -ntomp 2 -ntmpi 8 -gpu_id 01 """.format(**locals())
+gmx mdrun -deffnm npt_500ps -ntomp 8 -ntmpi 2 -gpu_id 01 """.format(**locals())
     return lines
 
 ###########################
