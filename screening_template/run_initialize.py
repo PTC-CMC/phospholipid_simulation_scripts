@@ -10,7 +10,11 @@ import scripts.bilayer as bilayer
 
 # Import statements for molecule prototypes
 import atomistic.dspc.DSPC as DSPC
+import atomistic.isis.ISIS as ISIS
 import atomistic.c24oh.oh24 as oh24
+import atomistic.c22oh.oh22 as oh22
+import atomistic.c20oh.oh20 as oh20
+import atomistic.c18oh.oh18 as oh18
 import atomistic.c16oh.oh16 as oh16
 import atomistic.c12oh.oh12 as oh12
 import atomistic.c24ffa.ffa24 as ffa24
