@@ -35,8 +35,8 @@ n_x = 8
 n_y = 8
 n_solvent_per_lipid = 20
 
-if os.path.isfile('index.txt'):
-    index = json.load(open('index.txt', 'r'))
+if os.path.isfile('index.json'):
+    index = json.load(open('index.json', 'r'))
 else:
     index = OrderedDict()
 
@@ -173,6 +173,9 @@ for i, composition in enumerate(table_of_contents):
     
     system = bilayer.translate_to_positive_octant(system)
     
+    system.save('compound.mol2', box=system.boundingbox, 
+            overwrite=True, residues=set([p.parent.name for p in system.particles()]))
+
     system.save('compound.gro', box=system.boundingbox, 
             overwrite=True, residues=set([p.parent.name for p in system.particles()]))
     bilayer.write_gmx_topology(system, 'compound.top', header=path_to_ff)
@@ -183,7 +186,7 @@ for i, composition in enumerate(table_of_contents):
     p.wait()
     with open('eq.pbs', 'w') as f:
         body = 'cd {}\n'.format(os.getcwd())
-        body += 'module load gromacs/5.1.4\n'
+        body += 'module load gromacs/2018.1\n'
         body += operations.write_eq_lines(gro='compound.gro', top='compound.top')
         script_utils.write_rahman_script(f, jobname="{}_setup".format(name), body=body)
 
