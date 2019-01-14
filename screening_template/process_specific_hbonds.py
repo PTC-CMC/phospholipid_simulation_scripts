@@ -27,6 +27,7 @@ for pair in compositions:
 
     # Initialize empty dictionaries to hold info from all sims
     composition_data = {}
+    
     for first,second in all_hbond_pairs:
         composition_data['{0}-{1}_hbnum_mean'.format(first,second)] = []
         composition_data['{0}-{1}_hbnum_std'.format(first,second)] = []
@@ -35,6 +36,9 @@ for pair in compositions:
         composition_data['{0}-{1}_hblife_unit'.format(first,second)] = 'ps'
 
     for sim in respective_sims:
+        for c in pair:
+            composition_data[c] = index[sim]['components'][c]
+
         os.chdir(os.path.join(curr_dir, sim))
         for first,second in all_hbond_pairs:
             if os.path.isfile('{0}-{1}_life.xvg'.format(first, second)):
